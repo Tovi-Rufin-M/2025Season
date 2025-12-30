@@ -27,18 +27,13 @@
             /* Ensures intro doesn't shift layout when hiding later */
             position: absolute; 
             width: 100%;
+            color: white;
         }
-
-        h1 {
-            color: #ffffff;
-            font-size: 3rem;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
-        }
-        p {
-            color: #ffffff;
-            font-size: 1.5rem;
-            padding: 20px;
+        .container {
+            display: grid;
+            grid-template-columns: 30% 1fr;
+            grid-template-rows: 1fr;
+            gap: 10px 10px;
         }
 
         /* MAIN CONTENT STYLES 
@@ -46,13 +41,15 @@
         #main {
             display: none; /* Initially hidden */
             opacity: 0;
-            background-color: #000000;
+            background-color: #00000087;
             height: 100vh;
             width: 400px;
             position: fixed;
             right: 0;
             top: 0;
             box-shadow: -5px 0 15px rgba(0,0,0,0.2); /* Added for depth */
+            color: white;
+            text-align: center;
         }
         #memories {
             display: none;
@@ -71,29 +68,31 @@
     </style>
 
     <div id="intro">
+        <div id="fireworks"><!-- Fireworks animation can be added here --></div>
         <h1 id="text"></h1>
     </div>
     
-    <div id="memories">
-        <div id="fireworks">
-            <!-- Fireworks content can go here -->
+
+    <!-- CONTENT AREA 
+    <div class="content">
+        <div id="memories">
+            <-- Memories content goes here videos
         </div>
-        <div id="video">
-            <!-- Video content can go here -->
+        <div id="main">
+            <div id="text" style="padding: 20px;">
+                <h1>my year</h1>
+                <p>Welcome to the main content area.</p>
+            </div>
         </div>
-    </div>
-    <div id="main">
-        <p>
-            <!-- Main content goes here -->
-            Welcome to the main content area.
-        </p>
-    </div>
+    </div>-->
+
 
     <script>
         const place = document.getElementById('text');
         const mainDiv = document.getElementById('main');
         const memoriesDiv = document.getElementById('memories');
         const introDiv = document.getElementById('intro');
+        const fireworksDiv = document.getElementById('fireworks');
         
         const textArray = [
             "and with that",
@@ -127,9 +126,12 @@
                 setTimeout(() => {
                     index++;
                     showintro(); // Recursion
-                }, 1000); 
+                }, 100); 
 
-            }, 1000); 
+            }, 100);
+        }
+        function fireworkseffect() {
+            //add fireworks effect here
         }
 
         function showmain() {
@@ -145,10 +147,13 @@
             setTimeout(() => {
                 mainDiv.classList.add('visible');
             }, 50);
+
         }
+
 
         // Start the sequence
         showintro();
+        fireworkseffect();
 
     </script>
 </body>
