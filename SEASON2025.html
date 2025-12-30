@@ -5,92 +5,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Season 2025</title>
 </head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(#160a2c 0%, #36361d 75%, #57531c 100%);
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    /* INTRO STYLES */
+    #intro {
+        text-align: center;
+        max-width: 800px;
+        /* Ensures intro doesn't shift layout when hiding later */
+        position: absolute; 
+        width: 100%;
+        color: white;
+    }
+    #container {
+        width: 100%;
+        height: 100%;
+        gap: 20px;
+        display: none; /* Hidden initially */
+        opacity: 0; /* For fade-in effect */
+        .item:nth-child(1) {
+            flex-grow: 1;
+        }
+    }
+    #text {
+        background-color: black;
+    }
+    #memories {
+
+    }
+
+    /* MAIN CONTENT STYLES 
+        (Moved from JS to CSS for cleaner code) */
+    
+    /* Utility class to trigger fade in */
+    #container.visible {
+        opacity: 1;
+    }
+</style>
 <body>
-    <style>
-        
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(#160a2c 0%, #36361d 75%, #57531c 100%);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* INTRO STYLES */
-        #intro {
-            text-align: center;
-            max-width: 800px;
-            /* Ensures intro doesn't shift layout when hiding later */
-            position: absolute; 
-            width: 100%;
-            color: white;
-        }
-        .container {
-            display: grid;
-            grid-template-columns: 30% 1fr;
-            grid-template-rows: 1fr;
-            gap: 10px 10px;
-        }
-
-        /* MAIN CONTENT STYLES 
-           (Moved from JS to CSS for cleaner code) */
-        #main {
-            display: none; /* Initially hidden */
-            opacity: 0;
-            background-color: #00000087;
-            height: 100vh;
-            width: 400px;
-            position: fixed;
-            right: 0;
-            top: 0;
-            box-shadow: -5px 0 15px rgba(0,0,0,0.2); /* Added for depth */
-            color: white;
-            text-align: center;
-        }
-        #memories {
-            display: none;
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: calc(100% - 400px);
-            height: 100vh;
-            background-color: #00000046;
-        }
-        
-        /* Utility class to trigger fade in */
-        #main.visible {
-            opacity: 1;
-        }
-    </style>
 
     <div id="intro">
         <div id="fireworks"><!-- Fireworks animation can be added here --></div>
         <h1 id="text"></h1>
     </div>
     
-
-    <!-- CONTENT AREA 
-    <div class="content">
-        <div id="memories">
-            <-- Memories content goes here videos
+    <div id="container">
+        <div class="item" id="memories" style="width: 75%;">
+            2 bruh
         </div>
-        <div id="main">
-            <div id="text" style="padding: 20px;">
-                <h1>my year</h1>
-                <p>Welcome to the main content area.</p>
-            </div>
+        <div class="item" id="text" style="width: 25%;">
+            3 bruh
         </div>
-    </div>-->
+    </div>
 
 
     <script>
         const place = document.getElementById('text');
-        const mainDiv = document.getElementById('main');
-        const memoriesDiv = document.getElementById('memories');
+        const containerDiv = document.getElementById('container');
         const introDiv = document.getElementById('intro');
         const fireworksDiv = document.getElementById('fireworks');
         
@@ -107,7 +87,7 @@
         function showintro() {
             // BASE CASE: If we run out of text, switch to main
             if (index >= textArray.length) {
-                showmain();
+                container();
                 return;
             }
 
@@ -134,18 +114,17 @@
             //add fireworks effect here
         }
 
-        function showmain() {
+        function container() {
             // 1. Hide the intro container entirely
             introDiv.style.display = 'none';
 
             // 2. Prepare main div (display block first so browser renders it)
-            mainDiv.style.display = 'block';
-            memoriesDiv.style.display = 'block';
+            containerDiv.style.display = 'flex';
 
             // 3. Small delay to ensure the browser processes 'display: block' 
             // before applying opacity, otherwise the transition won't fire.
             setTimeout(() => {
-                mainDiv.classList.add('visible');
+                containerDiv.classList.add('visible');
             }, 50);
 
         }
