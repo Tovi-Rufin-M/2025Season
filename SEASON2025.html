@@ -7,6 +7,7 @@
 </head>
 <body>
     <style>
+        
         body {
             font-family: Arial, sans-serif;
             background: linear-gradient(#160a2c 0%, #36361d 75%, #57531c 100%);
@@ -34,6 +35,11 @@
             opacity: 0;
             transition: opacity 1s ease-in-out;
         }
+        p {
+            color: #ffffff;
+            font-size: 1.5rem;
+            padding: 20px;
+        }
 
         /* MAIN CONTENT STYLES 
            (Moved from JS to CSS for cleaner code) */
@@ -47,11 +53,15 @@
             right: 0;
             top: 0;
             box-shadow: -5px 0 15px rgba(0,0,0,0.2); /* Added for depth */
-            #memories {
-                width: calc(100% - 400px);
-                height: 100vh;
-                background-color: #ffffff;
-            }
+        }
+        #memories {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: calc(100% - 400px);
+            height: 100vh;
+            background-color: #00000046;
         }
         
         /* Utility class to trigger fade in */
@@ -63,16 +73,26 @@
     <div id="intro">
         <h1 id="text"></h1>
     </div>
-
+    
+    <div id="memories">
+        <div id="fireworks">
+            <!-- Fireworks content can go here -->
+        </div>
+        <div id="video">
+            <!-- Video content can go here -->
+        </div>
+    </div>
     <div id="main">
-        <div id="memories">
-
-        </div>    
+        <p>
+            <!-- Main content goes here -->
+            Welcome to the main content area.
+        </p>
     </div>
 
     <script>
         const place = document.getElementById('text');
         const mainDiv = document.getElementById('main');
+        const memoriesDiv = document.getElementById('memories');
         const introDiv = document.getElementById('intro');
         
         const textArray = [
@@ -109,7 +129,7 @@
                     showintro(); // Recursion
                 }, 1000); 
 
-            }, 2000); 
+            }, 1000); 
         }
 
         function showmain() {
@@ -118,6 +138,7 @@
 
             // 2. Prepare main div (display block first so browser renders it)
             mainDiv.style.display = 'block';
+            memoriesDiv.style.display = 'block';
 
             // 3. Small delay to ensure the browser processes 'display: block' 
             // before applying opacity, otherwise the transition won't fire.
