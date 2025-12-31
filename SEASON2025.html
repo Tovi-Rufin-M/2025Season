@@ -4,148 +4,441 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Season 2025</title>
-</head>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background: linear-gradient(#160a2c 0%, #36361d 75%, #57531c 100%);
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
-
-    /* INTRO STYLES */
-    #intro {
-        text-align: center;
-        max-width: 800px;
-        /* Ensures intro doesn't shift layout when hiding later */
-        position: absolute; 
-        width: 100%;
-        color: white;
-    }
-    #container {
-        width: 100%;
-        height: 100%;
-        gap: 20px;
-        display: none; /* Hidden initially */
-        opacity: 0; /* For fade-in effect */
-        background-color: #0000007a;
-        .item:nth-child(1) {
-            flex-grow: 1;
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(#160a2c 0%, #36361d 75%, #57531c 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            color: white;
         }
-    }
-    #contenttext {
-        background-color: rgba(0, 0, 0, 0.534);
-        padding: 20px;
-        color: white;
-    }
-    #memories {
 
-    }
+        /* --- INTRO SECTION --- */
+        #intro {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
 
-    /* MAIN CONTENT STYLES 
-        (Moved from JS to CSS for cleaner code) */
-    
-    /* Utility class to trigger fade in */
-    #container.visible {
-        opacity: 1;
-    }
-    #fireworks {
-        width: 100%;
-        background-color: black; /* Placeholder for fireworks effect */
-    }
+        #intro-text {
+            font-size: 3rem;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            z-index: 2;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8);
+        }
 
-    #video {
-        width: 100%;
-        height: 100%;
-    }
-</style>
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; 
+        }
+
+        /* --- MAIN GALLERY SECTION --- */
+        #container {
+            width: 100%;
+            height: 100%;
+            display: none; 
+            opacity: 0;
+            transition: opacity 2s ease;
+            position: relative;
+            z-index: 5;
+            background-color: rgba(0, 0, 0, 0.6);
+            box-sizing: border-box;
+            padding: 20px;
+            gap: 20px;
+        }
+        
+        #container.visible {
+            opacity: 1;
+            display: flex;
+        }
+
+        .item {
+            position: relative;
+            height: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Memories Area (75%) */
+        #memories {
+            flex: 3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        #gallery-display {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        #gallery-display img, 
+        #gallery-display video {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        /* Text Area (25%) */
+        #contenttext {
+            flex: 1;
+            position: relative;
+            overflow: hidden; 
+            background-color: rgba(0, 0, 0, 0.3);
+            height: 100%;
+        }
+
+        #scroll-wrapper {
+            position: absolute;
+            top: 100%; /* Start below visible area */
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+            /* Transition set via JS */
+            transition-timing-function: linear; 
+        }
+
+        #scroll-wrapper h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: #ffd700;
+            text-transform: uppercase;
+        }
+
+        #scroll-wrapper h3 {
+            font-size: 1.5rem;
+            margin-top: 20px;
+            margin-bottom: 5px;
+            color: #ff9999;
+        }
+
+        #scroll-wrapper p {
+            font-size: 1rem;
+            margin-bottom: 15px;
+            color: #ddd;
+            line-height: 1.4;
+        }
+
+        /* --- OUTRO SECTION (Black Screen) --- */
+        #outro {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 20; /* Highest layer */
+            opacity: 0;
+            transition: opacity 2s ease; /* Fade in duration */
+        }
+        
+        #outro h1 {
+            font-size: 4rem;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+        }
+        
+        #outro.visible {
+            opacity: 1;
+        }
+
+    </style>
+</head>
 <body>
 
     <div id="intro">
-        <div id="fireworks"><!-- Fireworks animation can be added here --></div>
-        <h1 id="text"></h1>
+        <canvas id="canvas-intro"></canvas>
+        <h1 id="intro-text"></h1>
     </div>
     
     <div id="container">
-        <div class="item" id="memories" style="width: 75%;">
-            <div id="fireworks"></div>
-            <div id="video"></div>
+        <div class="item" id="memories">
+            <canvas id="canvas-gallery"></canvas>
+            <div id="gallery-display"></div>
         </div>
-        <div class="item" id="contenttext" style="width: 25%;">
-            <div id="textshow"></div>
+        <div class="item" id="contenttext">
+            <div id="scroll-wrapper">
+                </div>
         </div>
     </div>
 
+    <div id="outro">
+        <h1>Thanks for watching</h1>
+    </div>
 
     <script>
-        const place = document.getElementById('text');
+        // --- CONFIGURATION ---
+        const place = document.getElementById('intro-text');
         const containerDiv = document.getElementById('container');
         const introDiv = document.getElementById('intro');
-        const fireworksDiv = document.getElementById('fireworks');
+        const galleryDisplay = document.getElementById('gallery-display');
+        const scrollWrapper = document.getElementById('scroll-wrapper');
+        const outroDiv = document.getElementById('outro');
+
+        // Asset settings
+        const totalImages = 24;
+        const totalVideos = 14;
+        const imgExt = '.jpg'; 
         
-        const textArray = [
-            "and with that",
-            "The 2025 season",
-            "comes to an end",
-            "goodnight."
+        // --- 1. DEFINE YEAR END TEXT ---
+        const yearData = [
+            { month: "January", desc: "Started the year with hope." },
+            { month: "February", desc: "Things started moving fast." },
+            { month: "March", desc: "I enjoy this month." },
+            { month: "April", desc: "Sunny days and good vibes." },
+            { month: "May", desc: "Worked hard on new projects." },
+            { month: "June", desc: "Halfway through the journey." },
+            { month: "July", desc: "A time for relaxation." },
+            { month: "August", desc: "Preparing for the next step." },
+            { month: "September", desc: "Changes came unexpectedly." },
+            { month: "October", desc: "Focused on the goal." },
+            { month: "November", desc: "Almost there." },
+            { month: "December", desc: "Wrapping up a great year." }
         ];
 
-        // FIX: Variable moved outside the function so it doesn't reset to 0
-        let index = 0; 
+        let scrollHTML = "<h1>My Year</h1>";
+        yearData.forEach(item => {
+            scrollHTML += `<h3>${item.month}</h3><p>${item.desc}</p>`;
+        });
+        scrollWrapper.innerHTML = scrollHTML;
+
+        // --- 2. ASSET LIST & TIME CALCULATION ---
+        let assets = [];
+        let totalDuration = 0; 
+
+        // Add Images (0.4s each)
+        for (let i = 1; i <= totalImages; i++) {
+            assets.push({ type: 'img', src: `assets/${i}${imgExt}` });
+            totalDuration += 400; 
+        }
+
+        // Add Videos (2s each)
+        for (let i = 1; i <= totalVideos; i++) {
+            assets.push({ type: 'vid', src: `assets/Untitled video - Made with Clipchamp (${i}).mp4` });
+            totalDuration += 2000;
+        }
+
+        // --- FIREWORKS ENGINE ---
+        function startFireworks(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            let w, h;
+            let particles = [];
+            
+            function resize() {
+                w = canvas.width = canvas.parentElement.clientWidth;
+                h = canvas.height = canvas.parentElement.clientHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            function random(min, max) { return Math.random() * (max - min) + min; }
+
+            class Particle {
+                constructor() {
+                    this.x = w / 2;
+                    this.y = h / 2;
+                    this.vx = random(-2, 2) * 3;
+                    this.vy = random(-2, 2) * 3;
+                    this.life = random(0, 100);
+                    this.color = `hsl(${random(0, 360)}, 100%, 50%)`;
+                    this.size = random(2, 4);
+                }
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.life -= 1.5;
+                    this.vy += 0.05; // gravity
+                }
+                draw() {
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            function animate() {
+                // TRANSPARENT BACKGROUND LOGIC
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; 
+                ctx.fillRect(0, 0, w, h);
+                ctx.globalCompositeOperation = 'source-over';
+
+                if(Math.random() < 0.1) { 
+                    let exX = random(w*0.1, w*0.9);
+                    let exY = random(h*0.1, h*0.5);
+                    for(let i=0; i<50; i++){
+                        let p = new Particle();
+                        p.x = exX;
+                        p.y = exY;
+                        particles.push(p);
+                    }
+                }
+
+                for (let i = 0; i < particles.length; i++) {
+                    particles[i].update();
+                    particles[i].draw();
+                    if (particles[i].life <= 0) {
+                        particles.splice(i, 1);
+                        i--;
+                    }
+                }
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        // --- INTRO SEQUENCE ---
+        const textArray = ["and with that", "The 2025 season", "comes to an end", "goodnight."];
+        let introIndex = 0;
 
         function showintro() {
-            // BASE CASE: If we run out of text, switch to main
-            if (index >= textArray.length) {
-                container();
+            if(introIndex === 0) startFireworks('canvas-intro');
+
+            if (introIndex >= textArray.length) {
+                endIntroAndStartGallery();
                 return;
             }
 
-            // 1. Change text
-            place.innerHTML = textArray[index];
-
-            // 2. Fade In
+            place.innerHTML = textArray[introIndex];
             place.style.opacity = 1;
 
-            // 3. Wait for reading time (2s)
             setTimeout(() => {
-                // 4. Fade Out
                 place.style.opacity = 0;
-                
-                // 5. Wait for fade-out transition (1s), then next line
                 setTimeout(() => {
-                    index++;
-                    showintro(); // Recursion
-                }, 100); 
-
-            }, 100);
-        }
-        function fireworkseffect() {
-            //add fireworks effect here
+                    introIndex++;
+                    showintro();
+                }, 1000); 
+            }, 2000);
         }
 
-        function container() {
-            // 1. Hide the intro container entirely
+        function endIntroAndStartGallery() {
             introDiv.style.display = 'none';
+            containerDiv.style.display = 'flex'; 
+            
+            startFireworks('canvas-gallery');
 
-            // 2. Prepare main div (display block first so browser renders it)
-            containerDiv.style.display = 'flex';
-
-            // 3. Small delay to ensure the browser processes 'display: block' 
-            // before applying opacity, otherwise the transition won't fire.
             setTimeout(() => {
                 containerDiv.classList.add('visible');
+                runGallery(); 
+                startTextScroll();
             }, 50);
-
         }
 
+        // --- SCROLLING TEXT ---
+        function startTextScroll() {
+            const contentHeight = scrollWrapper.offsetHeight;
+            const containerHeight = document.getElementById('contenttext').offsetHeight;
+            
+            // Sync duration with total gallery time
+            scrollWrapper.style.transition = `transform ${totalDuration}ms linear`;
+            
+            requestAnimationFrame(() => {
+                const distance = contentHeight + containerHeight; 
+                scrollWrapper.style.transform = `translateY(-${distance}px)`;
+            });
+        }
 
-        // Start the sequence
+        // --- GALLERY LOGIC ---
+        let galleryIndex = 0;
+
+        function runGallery() {
+            if (assets.length === 0) return;
+
+            const item = assets[galleryIndex];
+            galleryDisplay.innerHTML = ''; 
+
+            let element;
+            let duration = 2000; 
+
+            if(item.type === 'img') {
+                element = document.createElement('img');
+                element.src = item.src;
+                duration = 400; // 0.4s for images
+                element.onerror = () => { console.log("Missing file:", item.src) };
+            } else {
+                element = document.createElement('video');
+                element.src = item.src;
+                element.muted = true;
+                element.autoplay = true;
+                element.playsInline = true;
+                element.loop = true;
+                duration = 2000; // 2s for videos
+                element.onerror = () => { console.log("Missing file:", item.src) };
+            }
+
+            galleryDisplay.appendChild(element);
+
+            // LOGIC FOR NEXT SLIDE OR ENDING
+            if (galleryIndex < assets.length - 1) {
+                // Keep going
+                galleryIndex++;
+                setTimeout(runGallery, duration);
+            } else {
+                // END OF GALLERY -> TRIGGER OUTRO
+                setTimeout(() => {
+                    triggerOutro();
+                }, duration);
+            }
+        }
+
+        // --- OUTRO LOGIC ---
+        function triggerOutro() {
+            // 1. Prepare Outro Div
+            outroDiv.style.display = 'flex';
+            
+            // 2. Small delay to allow display:flex to render before opacity change
+            setTimeout(() => {
+                // 3. Fade Out Main Container
+                containerDiv.style.opacity = 0;
+                
+                // 4. Fade In Outro
+                outroDiv.classList.add('visible');
+            }, 100);
+
+            // 5. Keep it for 3 seconds then technically the page is done.
+            // You could redirect or just leave it on black screen.
+            setTimeout(() => {
+                console.log("Show finished.");
+            }, 3000);
+        }
+
+        // Start everything
         showintro();
-        fireworkseffect();
 
     </script>
 </body>
