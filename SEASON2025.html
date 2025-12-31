@@ -117,13 +117,12 @@
 
         #scroll-wrapper {
             position: absolute;
-            top: 100%; /* Start below visible area */
+            top: 100%; 
             left: 0;
             width: 100%;
             padding: 20px;
             box-sizing: border-box;
             text-align: center;
-            /* Transition set via JS */
             transition-timing-function: linear; 
         }
 
@@ -148,7 +147,7 @@
             line-height: 1.4;
         }
 
-        /* --- OUTRO SECTION (Black Screen) --- */
+        /* --- OUTRO SECTION --- */
         #outro {
             position: absolute;
             top: 0;
@@ -159,9 +158,9 @@
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 20; /* Highest layer */
+            z-index: 20; 
             opacity: 0;
-            transition: opacity 2s ease; /* Fade in duration */
+            transition: opacity 2s ease; 
         }
         
         #outro h1 {
@@ -190,13 +189,12 @@
             <div id="gallery-display"></div>
         </div>
         <div class="item" id="contenttext">
-            <div id="scroll-wrapper">
-                </div>
+            <div id="scroll-wrapper"></div>
         </div>
     </div>
 
     <div id="outro">
-        <h1>Thanks for watching</h1>
+        <h1>salamat kay na patapos mo!!!</h1>
     </div>
 
     <script>
@@ -213,20 +211,28 @@
         const totalVideos = 14;
         const imgExt = '.jpg'; 
         
-        // --- 1. DEFINE YEAR END TEXT ---
+        // --- AUDIO CONFIGURATION ---
+        // Create audio objects
+        const audioIntro = new Audio('sounds/intro.mp3');
+        const audioMain = new Audio('sounds/track2.mp3');
+        
+        // Loop the main track just in case
+        audioMain.loop = true; 
+
+        // --- 1. DEFINE TEXT ---
         const yearData = [
-            { month: "January", desc: "Started the year with hope." },
-            { month: "February", desc: "Things started moving fast." },
-            { month: "March", desc: "I enjoy this month." },
-            { month: "April", desc: "Sunny days and good vibes." },
-            { month: "May", desc: "Worked hard on new projects." },
-            { month: "June", desc: "Halfway through the journey." },
-            { month: "July", desc: "A time for relaxation." },
-            { month: "August", desc: "Preparing for the next step." },
-            { month: "September", desc: "Changes came unexpectedly." },
-            { month: "October", desc: "Focused on the goal." },
-            { month: "November", desc: "Almost there." },
-            { month: "December", desc: "Wrapping up a great year." }
+            { month: "January", desc: "Ambut kong nag ano ko di, pero time ko nadi nga ga prepere ko for up comeing schoole year" },
+            { month: "February", desc: "lipat ko, basi diri nadi nga time nga sulod nako sa SO9." },
+            { month: "March", desc: "ambut gyapon, time nga ga bunding sa mga classmate." },
+            { month: "April", desc: "ga focus guro sa mga projects" },
+            { month: "May", desc: "yeah panggap skwila lang ta di guro" },
+            { month: "June", desc: "ambut lang pero sadya man di gyuro ahh" },
+            { month: "July", desc: "month sang na kilala ko si ano bala mo" },
+            { month: "August", desc: "ahh sang nag palainom nako??" },
+            { month: "September", desc: "lagaw guro upod classmate" },
+            { month: "October", desc: "yeah sang na ano ko sa ano, basta amo na ahh" },
+            { month: "November", desc: "syempre BDAY ko nga normal lang" },
+            { month: "December", desc: "last yeah nag happy happy upod family and ga focuse sa the forge nga roblox game" }
         ];
 
         let scrollHTML = "<h1>My Year</h1>";
@@ -239,13 +245,11 @@
         let assets = [];
         let totalDuration = 0; 
 
-        // Add Images (0.4s each)
         for (let i = 1; i <= totalImages; i++) {
             assets.push({ type: 'img', src: `assets/${i}${imgExt}` });
             totalDuration += 400; 
         }
 
-        // Add Videos (2s each)
         for (let i = 1; i <= totalVideos; i++) {
             assets.push({ type: 'vid', src: `assets/Untitled video - Made with Clipchamp (${i}).mp4` });
             totalDuration += 2000;
@@ -292,7 +296,6 @@
             }
 
             function animate() {
-                // TRANSPARENT BACKGROUND LOGIC
                 ctx.globalCompositeOperation = 'destination-out';
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; 
                 ctx.fillRect(0, 0, w, h);
@@ -327,7 +330,22 @@
         let introIndex = 0;
 
         function showintro() {
-            if(introIndex === 0) startFireworks('canvas-intro');
+            // Start Fireworks and Audio on the first loop
+            if(introIndex === 0) {
+                startFireworks('canvas-intro');
+                
+                // Play Intro Music
+                audioIntro.play().catch(e => {
+                    console.log("Audio autoplay blocked. User interaction needed.");
+                });
+
+                // Set timer to switch music after exactly 5 seconds
+                setTimeout(() => {
+                    audioIntro.pause();
+                    audioMain.currentTime = 0;
+                    audioMain.play();
+                }, 5000);
+            }
 
             if (introIndex >= textArray.length) {
                 endIntroAndStartGallery();
@@ -342,8 +360,8 @@
                 setTimeout(() => {
                     introIndex++;
                     showintro();
-                }, 1000); 
-            }, 2000);
+                }, 250); 
+            }, 1000);
         }
 
         function endIntroAndStartGallery() {
@@ -363,8 +381,6 @@
         function startTextScroll() {
             const contentHeight = scrollWrapper.offsetHeight;
             const containerHeight = document.getElementById('contenttext').offsetHeight;
-            
-            // Sync duration with total gallery time
             scrollWrapper.style.transition = `transform ${totalDuration}ms linear`;
             
             requestAnimationFrame(() => {
@@ -403,9 +419,7 @@
 
             galleryDisplay.appendChild(element);
 
-            // LOGIC FOR NEXT SLIDE OR ENDING
             if (galleryIndex < assets.length - 1) {
-                // Keep going
                 galleryIndex++;
                 setTimeout(runGallery, duration);
             } else {
@@ -418,20 +432,15 @@
 
         // --- OUTRO LOGIC ---
         function triggerOutro() {
-            // 1. Prepare Outro Div
-            outroDiv.style.display = 'flex';
+            // Stop the music
+            audioMain.pause();
             
-            // 2. Small delay to allow display:flex to render before opacity change
+            outroDiv.style.display = 'flex';
             setTimeout(() => {
-                // 3. Fade Out Main Container
                 containerDiv.style.opacity = 0;
-                
-                // 4. Fade In Outro
                 outroDiv.classList.add('visible');
             }, 100);
 
-            // 5. Keep it for 3 seconds then technically the page is done.
-            // You could redirect or just leave it on black screen.
             setTimeout(() => {
                 console.log("Show finished.");
             }, 3000);
